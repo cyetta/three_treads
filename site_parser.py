@@ -5,24 +5,22 @@ import pandas as pd
 
 
 #  Parse a site to search and display a given table
-#  return 0 if all ok, 1 if given table not find, 2 if some problem with site
+#  return DataFrame if all ok, None otherwise
 #  example print_table('https://www.w3schools.com/html/html_tables.asp', 'ws-table-all')
 def print_table(site_url, table_class_name):
-
     # Get a plane text of site page
     try:
         response = requests.get(site_url)
     except:
         print(f'Some problem with the site "{site_url}"')
-        return 2
+        return None
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # Search given table  by tag 'class:'
     table = soup.find('table', attrs={'class': table_class_name})
-
     if table == None:
         print(f'Table "{table_class_name}" not find')
-        return 1
+        return None
 
     # Get a header from table and create DataFrame
     header = []
@@ -37,5 +35,5 @@ def print_table(site_url, table_class_name):
         length = len(df)
         df.loc[length] = row
 
-    print(df)
-    return 0
+    print(df.to_string(index=None))
+    return df
